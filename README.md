@@ -1,16 +1,19 @@
 # Hello Database!
 
-Because `hello_world` is so 1974 and `hello_todo` is so 2015.
+Because `hello_world` is so 1974, and `hello_todo` is so 2015.
+
+**WORK IN PROGRESS - WHENEVER I FEEL LIKE IT**
 
 ### What is this?
 
-I figured the best way to learn a new language would be to implement a
-SQL database.
+I originally started this project in [Rust](https://www.rust-lang.org/).
 
-Also that it would be the best way to learn how to implement a SQL database.
+I figured the best way to learn a new language would be to implement a SQL
+database. Also that it would be the best way to learn how to implement a SQL
+database.
 
-I'd originally started this in Rust, but have since been more excited to learn
-Julia.
+This repo's in [Julia](http://julialang.org/) which is both one of the most
+powerful dynamic languags out there right now, and a joy to work in!
 
 ### Why a database?
 
@@ -30,3 +33,25 @@ Java.
 ### Are you actually gonna build a complete SQL database in Julia?
 
 ![](http://imgur.com/1odTKA9.png)
+
+### Should I use HelloDB to launch my next big-data web-scale billion dollar startup?
+
+No.
+
+## License
+
+```
+ DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                    Version 2, December 2004
+
+ Copyright (C) 2016 Noam Gagliardi-Rabinovich
+
+ Everyone is permitted to copy and distribute verbatim or modified
+ copies of this license document, and changing it is allowed as long
+ as the name is changed.
+
+            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+  0. You just DO WHAT THE FUCK YOU WANT TO.
+```

@@ -1,22 +1,30 @@
 module Pages
   using HelloDB.FileMgrs
   using HelloDB.Blocks
+  using HelloDB
 
   ##############################################################################
   # Exports
   ##############################################################################
 
   export Page
-  export string_size, read!, write!, getint, setint, getstring, setstring
+  export string_size, getint, setint, getstring, setstring, append
   export BLOCK_SIZE, INT_SiZE, CHAR_SIZE
 
   ##############################################################################
   # Constants
   ##############################################################################
 
-  const BLOCK_SIZE = 400
+  const BLOCK_SIZE = HelloDB.BLOCK_SIZE
   const INT_SiZE = sizeof(Int)
-  const CHAR_SIZE = 1 # TODO: or sizeof(Char) == 4 ??? I don't know things.
+  const CHAR_SIZE = 1
+  # sizeof(Char) == 4, but most alphabet is 1. This will
+  # also cause issue when reading from buffer as it will read 4 bytes
+  # (hence getstring() hack).
+  #
+  # TODO: Implement either
+  # 1. (4 - charsize)-byte 0x00 padding (naive).
+  # 2. proper utf handling.
 
   ##############################################################################
   # Implementation
@@ -46,8 +54,8 @@ module Pages
   """
   Append `page` contents to file `filename`.
   """
-  function append!(page::Page, filename)
-    append!(page.filemgr, page.contents)
+  function append(page::Page, filename)
+    FileMgrs.append(page.filemgr, filename, page.contents)
   end
 
   """
@@ -71,8 +79,8 @@ module Pages
   """
   Fill contents of `page` based on `block` filename and position.
   """
-  function read!(page::Page, block::Block)
-    read!(page.filemgr, block, page.contents)
+  function Base.read(page::Page, block::Block)
+    read(page.filemgr, block, page.contents)
   end
 
   """
@@ -102,7 +110,7 @@ module Pages
   """
   Write to `block` from `page` contents.
   """
-  function write!(page::Page, block::Block)
-    write!(page.filemgr, block, page.contents)
+  function Base.write(page::Page, block::Block)
+    write(page.filemgr, block, page.contents)
   end
 end
