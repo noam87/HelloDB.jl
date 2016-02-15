@@ -3,7 +3,6 @@ module HelloDB
   # Constants && Globals
   ##############################################################################
 
-  const BLOCK_SIZE = 400
   global DB = false
 
   ##############################################################################
@@ -11,26 +10,35 @@ module HelloDB
   ##############################################################################
 
   for (dir, filename) in [
+      ("FileMgr", "Data.jl"),
       ("FileMgr", "Blocks.jl"),
       ("FileMgr", "FileMgrs.jl"),
       ("FileMgr", "Pages.jl"),
+      ("logging", "LogRecords.jl"),
+      ("logging", "LogIterators.jl"),
+      ("logging", "LogMgrs.jl"),
     ]
 
     include(joinpath(dir, filename))
   end
 
   using HelloDB.FileMgrs
+  using HelloDB.LogMgrs: LogMgr
 
   ##############################################################################
   # Exports
   ##############################################################################
 
   export Database,
+         Data,
          FileMgrs,
            Blocks,
-           Pages
+           Pages,
+         LogMgrs,
+           LogRecords,
+           LogIterators
 
-  export DB, BLOCK_SIZE
+  export DB
 
   export reset, setdb, dropdb, is_dbdir
 
@@ -39,13 +47,14 @@ module HelloDB
   ##############################################################################
 
   type Database
-    filemgr::FileMgr
+    dbname
+    filemgr
+    logmgr
 
     function Database(dbname::AbstractString)
-      new(FileMgr(dbname))
+      new(dbname, false, false)
     end
   end
-
 
   ##############################################################################
   # Globals
@@ -72,8 +81,11 @@ module HelloDB
     length(filter(x->x==".dbdir", readdir(dirpath))) == 1
   end
 
+  using Debug
   function setdb(dbname)
     global DB
     DB = Database(dbname)
+    DB.filemgr = FileMgr(dbname)
+    DB.logmgr = LogMgr()
   end
 end

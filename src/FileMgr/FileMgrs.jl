@@ -1,10 +1,14 @@
 """
 HelloDB saves data into files. Data is broken up into blocks, and
 fetched/manipulated within a `Page` buffer.
+
+Strings are saved withing a page as an int, representing the length of the
+string, followed by chars.
 """
 module FileMgrs
   using HelloDB
   using HelloDB.Blocks
+  using HelloDB.Data: BLOCK_SIZE
   ##############################################################################
   # Exports
   ##############################################################################
@@ -74,13 +78,16 @@ module FileMgrs
     block
   end
 
-  function size(filemgr::FileMgr, filename)
+  """
+  Size of file `filename`, in blocks`::Block`.
+  """
+  function size(filemgr::FileMgr, filename::AbstractString)
     file = _getfile(filemgr, filename)
-    ratio = filesize(file) / HelloDB.BLOCK_SIZE
-    if ratio % HelloDB.BLOCK_SIZE != 0
+    ratio = filesize(file) / BLOCK_SIZE
+    if ratio % BLOCK_SIZE != 0
       round(Int, floor(ratio)) + 1
     else
-      ratio + 1
+      ratio
     end
   end
 

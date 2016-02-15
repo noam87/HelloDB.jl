@@ -32,7 +32,8 @@ module TestFileMgrPages
     @test page.contents.size == 2 + length("boobs") + sizeof(Int)
   end
 
-  function test_read()
+  using Debug
+  @debug function test_read()
     dbname = "test_filemgr_pages_read"
     setdb(dbname)
     filename = DB.filemgr.dbdir * "/test_read"

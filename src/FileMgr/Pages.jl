@@ -1,7 +1,12 @@
+"""
+Before performing disk IO, data is manipulated within a `Pgae`.
+Data is broken up into `Block` objects, which are then saved to file.
+"""
 module Pages
   using HelloDB.FileMgrs
   using HelloDB.Blocks
-  using HelloDB
+  using HelloDB.Data: INT_SIZE, CHAR_SIZE, BLOCK_SIZE
+  using HelloDB: DB
 
   ##############################################################################
   # Exports
@@ -9,35 +14,21 @@ module Pages
 
   export Page
   export string_size, getint, setint, getstring, setstring, append
-  export BLOCK_SIZE, INT_SiZE, CHAR_SIZE
-
-  ##############################################################################
-  # Constants
-  ##############################################################################
-
-  const BLOCK_SIZE = HelloDB.BLOCK_SIZE
-  const INT_SiZE = sizeof(Int)
-  const CHAR_SIZE = 1
-  # sizeof(Char) == 4, but most alphabet is 1. This will
-  # also cause issue when reading from buffer as it will read 4 bytes
-  # (hence getstring() hack).
-  #
-  # TODO: Implement either
-  # 1. (4 - charsize)-byte 0x00 padding (naive).
-  # 2. proper utf handling.
 
   ##############################################################################
   # Implementation
   ##############################################################################
 
-  """
-  Before performing disk IO, data is manipulated within a `Pgae`.
-  Data is broken up into `Block` objects, which are then saved to file.
-  """
   type Page
     contents::IOBuffer
     filemgr::FileMgr
 
+    """
+    Page() is initialized with the Database file manage (`DB.filemgr`).
+    For testing purposes, one may initialize a `Page` with an empty
+    filemanager which will not write to disk by negating the
+    `realfile` initialization parameter: `Page(false)`.
+    """
     function Page(realfile=true)
       buffer = IOBuffer(BLOCK_SIZE)
 
@@ -60,7 +51,7 @@ module Pages
 
   """
   Gets the first byte in `page.contents` buffer as `Int`.
-  This represents the length of string starting at the pointer position.
+  (This may represnt the length of string starting at the pointer position.)
   """
   function getint(page::Page, offset::Int)
     seek(page.contents, offset)
@@ -69,10 +60,15 @@ module Pages
 
   """
   Like `getint()` but for a string of `Char`.
+  First we get the string's expected length (represented by an int at the
+  beginning of the char sequence), next we red the chars into a string.
   """
   function getstring(page::Page, offset::Int)
     seek(page.contents, offset)
     str_len = read(page.contents, Int)
+    # We assume all chars are stored on disk as single-byte, then convert these
+    # hex values to an array of chars in memory, then to a string
+    # (grep TODO#charsize).
     AbstractString(map(x->Char(x), readbytes(page.contents, str_len)))
   end
 
@@ -104,7 +100,7 @@ module Pages
   Strings will be represented as arrays of the form `[str_length, chars...]`.
   """
   function string_size(n)
-    INT_SiZE + (n * CHAR_SIZE)
+    INT_SIZE + (n * CHAR_SIZE)
   end
 
   """

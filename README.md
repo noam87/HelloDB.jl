@@ -15,6 +15,10 @@ database.
 This repo's in [Julia](http://julialang.org/) which is both one of the most
 powerful dynamic languags out there right now, and a joy to work in!
 
+This is mostly an educational exercise for myself, but I will try to make the
+code as readable as I can and include lots of explanatory comments, both
+for the betterment of futureme and others.
+
 ### Why a database?
 
 A database involves understanding IO (read/write to/from disk), memory
@@ -36,7 +40,7 @@ Java.
 
 ### Should I use HelloDB to launch my next big-data web-scale billion dollar startup?
 
-No.
+Yes.
 
 ## License
 
