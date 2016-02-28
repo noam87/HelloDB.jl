@@ -14,7 +14,7 @@ Each log record is identified by a Log Record Number (LSN).
 """
 module LogMgrs
   using HelloDB.Pages: Page, append, setint, setstring
-  import HelloDB.Pages: append
+  import HelloDB.Pages: append, getint
   using HelloDB.Blocks: Block
   using HelloDB.FileMgrs: FileMgr, size
   using HelloDB: DB
@@ -31,6 +31,7 @@ module LogMgrs
   # Implementation
   ##############################################################################
 
+using Debug
   type LogMgr
     logfile::AbstractString
     logpage::Page
@@ -58,6 +59,7 @@ module LogMgrs
         currentpos = _get_last_record_pos(logpage, lastpos) + INT_SIZE
       end
 
+      log("Initializing LogMgr with logfile=$(logfile)")
       new(logfile, logpage, currentblock, currentpos, lastpos)
     end
   end
@@ -72,7 +74,7 @@ module LogMgrs
   function append(logmgr::LogMgr, record::Vector)
     recsize = INT_SIZE
     [ recsize += _size(val) for val in record ]
-    if logmgr.currentpos + record >= BLOCK_SIZE
+    if logmgr.currentpos + recsize >= BLOCK_SIZE
       _flush(logmgr)
       _append_newblock(logmgr)
     end
@@ -140,11 +142,12 @@ module LogMgrs
   function _finalize_record(logmgr::LogMgr)
     lastpos = _get_last_record_pos(logmgr)
     setint(logmgr.logpage, logmgr.currentpos, lastpos)
+    _set_last_record_pos(logmgr, logmgr.currentpos)
     logmgr.currentpos += INT_SIZE
   end
 
   function _flush(logmgr)
-    write(logmgr.logpage, currentblock)
+    write(logmgr.logpage, logmgr.currentblock)
   end
 
   function _get_last_record_pos(logmgr::LogMgr)

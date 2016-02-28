@@ -32,14 +32,17 @@ module FileMgrs
 
       if !isdir(dbdir)
         isnew = true
+        log("creating new dbdir file at=($(dbdir))")
         mkdir(dbdir)
         _make_dbdir_file(dbdir)
       end
 
       # clear leftover temp files
       tempfiles = filter(f->startswith(f, "temp"), readdir(dbdir))
+      log("clearing tempfiles")
       [rm(dbdir + "/$file") for file in tempfiles]
 
+      log("initializing new FileMgr")
       new(dbdir, isnew, Dict())
     end
 

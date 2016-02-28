@@ -1,3 +1,5 @@
+# TODO: see julia iterators
+
 """
 Implementation of iterator used in `LogMgrs` module.
 
@@ -15,7 +17,7 @@ module LogIterators
   ##############################################################################
 
   export LogIterator
-  export hasnext
+  export hasnext, next
 
   ##############################################################################
   # Implementation
@@ -30,7 +32,7 @@ module LogIterators
       page = Page()
       read(page, block)
 
-      new(block, page, getint(page, DB.LogMgr.lastpos))
+      new(block, page, getint(page, DB.logmgr.lastpos))
     end
   end
 

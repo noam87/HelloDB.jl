@@ -1,2 +1,2 @@
 #! /bin/sh
-julia test/runtests.jl
+julia --color=yes test/runtests.jl

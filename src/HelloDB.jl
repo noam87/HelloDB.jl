@@ -1,3 +1,7 @@
+function Base.log(txt::AbstractString)
+  print_with_color(:blue, txt * "\n")
+end
+
 module HelloDB
   ##############################################################################
   # Constants && Globals

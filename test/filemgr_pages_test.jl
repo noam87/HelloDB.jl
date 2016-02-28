@@ -3,6 +3,7 @@ module TestFileMgrPages
   using HelloDB.Pages
   using HelloDB.Blocks
   using HelloDB
+  using TestHelpers: set_test_db
 
   function test_getint()
     page = Page(false)
@@ -32,10 +33,8 @@ module TestFileMgrPages
     @test page.contents.size == 2 + length("boobs") + sizeof(Int)
   end
 
-  using Debug
-  @debug function test_read()
-    dbname = "test_filemgr_pages_read"
-    setdb(dbname)
+  function test_read()
+    set_test_db()
     filename = DB.filemgr.dbdir * "/test_read"
 
     f = open(filename, "w+")
@@ -50,8 +49,7 @@ module TestFileMgrPages
   end
 
   function test_write()
-    dbname = "test_filemgr_pages_write"
-    setdb(dbname)
+    set_test_db()
     filename = "test_write"
 
     block1 = Block(filename, 0)
@@ -83,8 +81,7 @@ module TestFileMgrPages
   end
 
   function test_append()
-    dbname = "test_filemgr_pages_append"
-    setdb(dbname)
+    set_test_db()
     filename = "test_append"
 
     block1 = Block(filename, 0)
